@@ -1,0 +1,35 @@
+#
+# Makefile of "Flag Breaker!"
+#
+
+
+PATH	= ${realpath ../local}
+
+CC	= gcc
+CFLAGS	= -O3 -Wall
+INCDIR	= -I${PATH}/include/SDL
+LIBDIR	= -L${PATH}/lib ${PATH}/lib/libSDLmain.a ${PATH}/lib/libSDL.a
+LIBS	= -lSDL -lSDLmain -lSDL_image -lSDL_net
+LOPT	= -Wl,-framework,OpenGL -Wl,-framework,Cocoa \
+	  -Wl,-framework,ApplicationServices -Wl,-framework,Carbon \
+	  -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit \
+	  -Wl,-framework,IOKit
+
+SSRCS = server.c game_lib.c networks.c
+SOBJS = ${SSRCS:.c=.o}
+CSRCS = client.c game_lib.c networks.c
+COBJS = ${CSRCS:.c=.o}
+
+
+ALL: server client
+
+server: ${SOBJS}
+	${CC} ${CFLAGS} ${INCDIR} -o $@ ${SOBJS} ${LIBDIR} ${LIBS} ${LOPT}
+client: ${COBJS}
+	${CC} ${CFLAGS} ${INCDIR} -o $@ ${COBJS} ${LIBDIR} ${LIBS} ${LOPT}
+
+.c.o:
+	${CC} ${CFLAGS} ${INCDIR} -c $<
+
+clean:
+	rm -f *.o *.*~ *~ server client
